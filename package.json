@@ -26,8 +26,11 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
     "@prisma/client": "^6.16.2",
+    "helmet": "^8.1.0",
+    "nestjs-zod": "^5.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
