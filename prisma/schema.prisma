@@ -13,13 +13,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id               String   @id
-  name             String
-  address          Json
-  phoneNumber      String
-  email            String   @unique
-  passwordHash     String   
-  createdTimestamp DateTime @default(now())
-  updatedTimestamp DateTime @updatedAt
+enum AccountType { 
+  CURRENT
+  SAVINGS
 }
+
+enum TransactionType {
+  deposit
+  withdrawal
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  accounts     Account[]
+}
+
+model Account {
+  id        String        @id @default(uuid())
+  userId    String
+  name      String
+  type      AccountType
+  balance   Decimal       @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  txns      Transaction[]
+  @@index([userId])
+}
+
+model Transaction {
+  id         String          @id @default(uuid())
+  accountId  String
+  type       TransactionType
+  amount     Decimal
+  createdAt  DateTime        @default(now())
+  account    Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([accountId])
+}
+
