@@ -60,6 +60,22 @@ jobs:
   e2e_tests:
     name: End-to-end tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: eagle
+          POSTGRES_PASSWORD: eagle
+          POSTGRES_DB: eaglebank
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U eagle -d eaglebank"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=10
+    env:
+      DATABASE_URL: postgresql://eagle:eagle@localhost:5432/eaglebank?schema=public
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,6 +91,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: npx prisma generate
+
+      - run: npx prisma migrate deploy
 
       - name: Unit tests
         run: npm run test:e2e
